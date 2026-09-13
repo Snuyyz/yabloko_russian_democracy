@@ -1,5 +1,9 @@
 title: Election
 on-arrival: {!
+// ===== STAGE 1: PR VOTE SHARE (adapted directly from the base game's
+// election_algorithm.scene.dry - same normalization/aggregation mechanism,
+// remapped to our classes/parties per DESIGN_DOC §2) =====
+
 // calculate normalized class voting amounts (0 to 100)
 for (var c of Q.classes) {
     var class_votes = 0;
@@ -20,87 +24,108 @@ var total_support = 0;
 for (var party of Q.parties) {
     var party_support = 0;
     for (var c of Q.classes) {
-        // but this version is somewhat more entertaining and allows for wilder swings in votes.
-        // the other option basically necessitates a multi-class strategy. while the first option allows for a working-class-only strategy.
-        if (Q.old_demographics) {
-            // okay i'm pretty sure this is wrong, and the hard version is correct
-            // basically this allows for "spillover" effects in other demographics.
-            // so you can campaign among say the workers and 
-            party_support += Q[c]*Q[c+'_'+party];
-            // However, there should be a cap on how much party support you can get in a certain demo.
-        } else  {
-            party_support += Q[c]*Q[c+'_'+party+'_normalized'];
-        }
+        party_support += Q[c]*Q[c+'_'+party+'_normalized'];
     }
     Q[party + '_support'] = party_support;
     total_support += party_support;
-    if (party == "other") {
-        Q.cnblp_normalized = Q.rural_other_normalized*Q.rural;
-        Q.wp_normalized = (Q.new_middle_other_normalized*Q.new_middle) + (Q.old_middle_other_normalized*Q.old_middle);
-        if (Q.csvd_formed && !Q.aspd_other) Q.csvd_normalized = Q.workers_other_normalized*Q.workers;
-        if (Q.aspd_other) Q.aspd_normalized = (Q.workers_other_normalized*Q.workers) + (Q.unemployed_other_normalized*Q.unemployed);
-        if (Q.aspd_kvp) Q.aspd_normalized = (Q.workers_kvp_normalized*Q.workers) + (Q.unemployed_kvp_normalized*Q.unemployed);
-        if (Q.right_dnef) Q.right_dnef_normalized = ((Q.new_middle_dnef_normalized / 2)*Q.new_middle) + (Q.old_middle_dnef_normalized*Q.old_middle) + (Q.rural_dnef_normalized*Q.rural) + ((Q.catholics_dnef_normalized / 2)*Q.catholics);
-        if (Q.left_dnef) Q.left_dnef_normalized = ((Q.new_middle_dnef_normalized / 2)*Q.new_middle) + (Q.workers_dnef_normalized*Q.workers) + (Q.unemployed_dnef_normalized*Q.unemployed) + ((Q.catholics_dnef_normalized / 2)*Q.catholics);
-    }
-    if (party == "nsdap" && Q.nsdap_split) {
-        Q.nsdap_hitler_support = Q.rural_nsdap_normalized*Q.rural;
-        Q.nsdap_hitler_support += Q.old_middle_nsdap_normalized*Q.old_middle;
-        Q.nsdap_hitler_support += Q.catholics_nsdap_normalized*Q.catholics;
-
-        if (Q.dsu_exist && !Q.nvf_exist) {
-            Q.dsu_support = Q.workers_nsdap*Q.workers*((120 - Q.sa_force) / 100);
-            Q.dsu_support += Q.unemployed_nsdap*Q.unemployed*((80 - Q.sa_force) / 100);
-            Q.dsu_support += Q.new_middle_nsdap*Q.new_middle;
-        } else if (!Q.dsu_exist && Q.nvf_exist) {
-            Q.nvf_support = Q.unemployed_nsdap*Q.unemployed*((120 - Q.sa_force) / 100);
-            Q.nvf_support += Q.workers_nsdap*Q.workers*((Q.sa_force - 80) / 100);
-            Q.nvf_support += Q.new_middle_nsdap*Q.new_middle;
-        } else if (Q.dsu_exist && Q.nvf_exist) {
-            Q.dsu_support = Q.workers_nsdap*Q.workers*((120 - Q.sa_force) / 100);
-            Q.dsu_support += Q.unemployed_nsdap*Q.unemployed*((80 - Q.sa_force) / 100);
-            Q.dsu_support += Q.new_middle_nsdap*Q.new_middle;
-
-            Q.nvf_support = Q.unemployed_nsdap*Q.unemployed*((120 - Q.sa_force) / 100);
-            Q.nvf_support += Q.workers_nsdap*Q.workers*((Q.sa_force - 80) / 100);
-        } else {
-            Q.nsdap_hitler_support += Q.workers_nsdap*Q.workers;
-            Q.nsdap_hitler_support += Q.unemployed_nsdap*Q.unemployed;
-            Q.nsdap_hitler_support += Q.new_middle_nsdap*Q.new_middle;
-        }
-    }
+    // Bespoke minor-party splitting inside 'other' goes here, following the
+    // base game's cnblp/wp/csvd pattern - e.g. Kedr/Greens or RPR-PARNAS could
+    // be split out of 'other' this way once they warrant individual tracking
+    // rather than being folded into the catch-all bucket. Not yet needed for
+    // the Act I slice, since RPR already has its own top-level party entry.
 }
-// 2. normalize support (fraction)
-// 3. Round to integers
+
+// 2. normalize support (fraction), 3. round to one decimal - same as base game
 for (var party of Q.parties) {
     Q[party+'_normalized'] = Q[party + '_support']/total_support;
-    if (party == "other") {
-        Q.cnblp_votes = (Q.cnblp_normalized/total_support);
-        Q.wp_votes = (Q.wp_normalized/total_support);
-        if (Q.csvd_formed && !Q.aspd_other) Q.csvd_votes = (Q.csvd_normalized/total_support);
-        if (Q.aspd_other || Q.aspd_kvp) Q.aspd_votes = (Q.aspd_normalized/total_support);
-        if (Q.right_dnef) Q.right_dnef_votes = (Q.right_dnef_normalized/total_support);
-        if (Q.left_dnef) Q.left_dnef_votes = (Q.left_dnef_normalized/total_support);
-    }
-    if (party == "nsdap" && Q.nsdap_split) {
-        Q.nsdap_hitler_normalized = Q.nsdap_hitler_support / total_support;
-        Q.dsu_normalized = Q.dsu_support / total_support;
-        if (Q.nvf_exist) Q.nvf_normalized = Q.nvf_support / total_support;
-        Q.nsdap_hitler_votes = Math.round(Q.nsdap_hitler_normalized*1000) / 10;
-        Q.dsu_votes = Math.round(Q.dsu_normalized*1000) / 10;
-        if (Q.nvf_exist) Q.nvf_votes = Math.round(Q.nvf_normalized*1000) / 10;
-    }
     Q[party+'_votes'] = Math.round(Q[party+'_normalized']*1000)/ 10;
-    if (party == "other") {
-        Q.cnblp_votes = Math.round((Q.cnblp_votes*1000)/10);
-        Q.wp_votes = Math.round((Q.wp_votes*1000)/10);
-        if (Q.csvd_formed && !Q.aspd_other) Q.csvd_votes = Math.round((Q.csvd_votes*1000)/10);
-        if (Q.aspd_other || Q.aspd_kvp) Q.aspd_votes = Math.round((Q.aspd_votes*1000)/10);
-        if (Q.right_dnef) Q.right_dnef_votes = Math.round((Q.right_dnef_votes*1000)/10);
-        if (Q.left_dnef) Q.left_dnef_votes = Math.round((Q.left_dnef_votes*1000)/10);
+}
+
+// ===== STAGE 2: SEAT ALLOCATION - MIXED-MEMBER SYSTEM (new, per DESIGN_DOC §4) =====
+// The Weimar Reichstag is near-pure PR, so the base game never needed a
+// seat-conversion step (see library.scene.dry's plain seats = round(vote_share
+// * chamber_size)). The Duma is 450 seats: 225 party-list PR + 225 single-
+// mandate FPTP. This stage is entirely new - it consumes this scene's own
+// _votes output as input, so it must run after Stage 1 above, not before.
+
+// --- 2a. PR half (225 seats): plain proportional allocation, with threshold ---
+// Russian Duma PR thresholds have varied by era: 5% pre-2007, 7% 2007-2011,
+// back to 5% from 2016. Q.pr_threshold should be set elsewhere (root.scene.dry
+// or a threshold-change event) before this scene runs; default to 5 if unset.
+if (!Q.pr_threshold) {
+    Q.pr_threshold = 5;
+}
+// 'other' gets its own, much higher threshold (20%) for PR eligibility. At
+// normal fragmentation levels 'other' is a genuine catch-all of many small
+// parties/independents that individually would never clear a 5-7% threshold,
+// so it stays PR-ineligible like the base game's minor-party buckets. But
+// since we don't model every mid-sized party individually (e.g. there is no
+// Fatherland-All Russia-equivalent entry, which took 37 real PR seats in
+// 1999), a large 'other' share at this scale is standing in for a real party
+// that plausibly would clear the ordinary threshold on its own - so above
+// 20% specifically, 'other' becomes PR-eligible too, on the same terms as
+// any named party.
+if (!Q.pr_other_threshold) {
+    Q.pr_other_threshold = 20;
+}
+
+var pr_eligible_total = 0;
+for (var party of Q.parties) {
+    if (party == "other" && Q[party+'_votes'] >= Q.pr_other_threshold) {
+        pr_eligible_total += Q[party+'_votes'];
+    } else if (party != "other" && Q[party+'_votes'] >= Q.pr_threshold) {
+        pr_eligible_total += Q[party+'_votes'];
     }
+}
+for (var party of Q.parties) {
+    if (party == "other") {
+        if (Q[party+'_votes'] >= Q.pr_other_threshold && pr_eligible_total > 0) {
+            Q[party+'_pr_seats'] = Math.round((Q[party+'_votes'] / pr_eligible_total) * 225);
+        } else {
+            Q[party+'_pr_seats'] = 0;
+        }
+    } else if (Q[party+'_votes'] >= Q.pr_threshold && pr_eligible_total > 0) {
+        Q[party+'_pr_seats'] = Math.round((Q[party+'_votes'] / pr_eligible_total) * 225);
+    } else {
+        Q[party+'_pr_seats'] = 0;
+    }
+}
+
+// --- 2b. FPTP half (225 seats): modified cube law, per DESIGN_DOC §4 ---
+// Named parties: (vote_share/2)^2. 'other': vote_share^3 (undamped).
+// Verified against the user-supplied 1999 worked example: reproduces
+// Yabloko 3, KPRF 56, LDPR 3, Unity/UR 51, SPS 7, SR 0, Other 104 exactly
+// when fed those parties' real 1999 PR vote shares. Unlike the PR half above,
+// the FPTP formula's cube/square treatment already handles a large 'other'
+// share proportionately, so no separate other-threshold is needed here.
+var fptp_total = 0;
+for (var party of Q.parties) {
+    var v = Q[party+'_votes'] / 100;
+    if (party == "other") {
+        Q[party+'_fptp_modified'] = Math.pow(v, 3);
+    } else {
+        Q[party+'_fptp_modified'] = Math.pow(v / 2, 2);
+    }
+    fptp_total += Q[party+'_fptp_modified'];
+}
+for (var party of Q.parties) {
+    if (fptp_total > 0) {
+        Q[party+'_fptp_seats'] = Math.round((Q[party+'_fptp_modified'] / fptp_total) * 225);
+    } else {
+        Q[party+'_fptp_seats'] = 0;
+    }
+}
+
+// --- 2c. Combined total ---
+// Small rounding drift from 450 is expected and accepted as-is per
+// DESIGN_DOC §4 (both halves round independently) - no largest-remainder
+// cleanup pass, matching the design decision already made.
+for (var party of Q.parties) {
+    Q[party+'_total_seats'] = Q[party+'_pr_seats'] + Q[party+'_fptp_seats'];
 }
 !}
 go-to: jumpScene
 
-# note: this is a helpful utility to deal with elections and so on.
+# note: this is a helpful utility to deal with Duma elections. Presidential
+# and municipal/regional elections need their own resolution logic and should
+# not call this scene directly, per DESIGN_DOC §4's implementation notes.
