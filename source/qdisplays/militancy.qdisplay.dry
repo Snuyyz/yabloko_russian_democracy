@@ -6,5 +6,5 @@
 (14..24) Low
 (24..44) Medium-low
 (44..69) Medium
-(69..1) High
-(1..) Very high
+(69..100) High
+(100..) Very high
