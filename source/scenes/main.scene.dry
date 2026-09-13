@@ -62,10 +62,10 @@ max-cards: 3
 
 {!<div class="scrollable-box">!}
 
-// Flavor paragraphs (per-month narrative text, [? if year = X and month = Y: ... ?]
-// style, matching the base game's pattern) are intentionally not yet written here.
-// See DESIGN_DOC and the flavour-trigger placeholder above for the intended
-// structure once that content pass begins.
+# Flavor paragraphs (per-month narrative text, [? if year = X and month = Y: ... ?]
+# style, matching the base game's pattern) are intentionally not yet written here.
+# See DESIGN_DOC and the flavour-trigger placeholder above for the intended
+# structure once that content pass begins.
 
 {!</div>!}
 
