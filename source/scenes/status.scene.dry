@@ -27,7 +27,7 @@ Resources available: [+ resources +]
 
 <span style="color: #F5821F;">**Yabloko**</span> position: [? if yabloko_toleration : toleration ?][? if yabloko_in_government : in government - ?][? if not yabloko_toleration and not yabloko_in_government : opposition ?]
 
-[? if in_technocrat_cooperation and yabloko_in_government: Technocratic Cooperation ?][? if in_opposition and not yabloko_in_government: Opposition ?]
+Party [+ leader_party_role +]: [+ leader +]
 
 [? if coalition_dissent: Coalition dissent: [+ coalition_dissent : coalition_dissent +] ?]
 
@@ -38,8 +38,6 @@ Internal dissent: [+ dissent_percent : dissent +]
 President: <span style="color: #808080;">[+ president +]</span> ([? if president_party == "I": I?][? if president_party != "I": [+ president_party +]?])
 
 Prime Minister: [+ prime_minister +] ([+ prime_minister_party +])
-
-Party Chairman: [+ leader +] ([+ leader_party_role +])
 
 Finance Minister: [+ finance_minister +] ([? if finance_minister_party == "Yabloko": <span style="color: #F5821F;">**Yabloko**</span>?][? if finance_minister_party == "I": I?][? if finance_minister_party != "Yabloko" and finance_minister_party != "I": [+ finance_minister_party +]?])
 
@@ -53,21 +51,10 @@ Defense Minister: [+ defense_minister +] ([+ defense_minister_party +])
 
 Economy Minister: [+ economy_minister +] ([+ economy_minister_party +])
 
-Agriculture Minister: [+ agriculture_minister +] ([+ agriculture_minister_party +])
-
-Communications Minister: [+ communications_minister +] ([+ communications_minister_party +])
-
-Culture Minister: [+ culture_minister +] ([+ culture_minister_party +])
-
-Health Minister: [+ health_minister +] ([+ health_minister_party +])
-
 Labor Minister: [+ labor_minister +] ([+ labor_minister_party +])
+Relations with the Executive: [+ executive_relation : relationships +]
 
-Transport Minister: [+ transport_minister +] ([+ transport_minister_party +])
-
-Executive relation: [+ executive_relation : relationships +]
-
-State Duma composition (PR + FPTP seats, per DESIGN_DOC §4):
+= State Duma
 
 <span style="color: #F5821F;">**Yabloko**</span>: [+ yabloko_total_seats +] ([+ yabloko_pr_seats +] PR + [+ yabloko_fptp_seats +] FPTP)
 
@@ -115,13 +102,13 @@ Oligarch relation: [+ oligarch_relation : relationships +]
 
 = Party Leadership
 
-<span style="color: #D2232A;">**KPRF**</span>: Marxist-Leninist ([+ kprf_leader +])
+<span style="color: #D2232A;">**KPRF**</span>: Marxism-leninism ([+ kprf_leader +])
 
-<span style="color: #003399;">**LDPR**</span>: Nationalist Populism ([+ ldpr_leader +])
+<span style="color: #003399;">**LDPR**</span>: Far-right populism ([+ ldpr_leader +])
 
-<span style="color: #4A7C2F;">**NDR**</span>: Centrist/Pro-Government ([+ ndr_leader +])
+<span style="color: #4A7C2F;">**NDR**</span>: Pro-government big-tent-ism ([+ ndr_leader +])
 
-<span style="color: #6B6B6B;">**RPR**</span>: Liberal Democratic ([+ rpr_leader +])
+<span style="color: #6B6B6B;">**RPR**</span>: Liberal conservatism ([+ rpr_leader +])
 
 = Internal Factions of <span style="color: #F5821F;">**Yabloko**</span>
 
@@ -141,7 +128,7 @@ Oligarch relation: [+ oligarch_relation : relationships +]
 
 [? if katz_exited: Katz has left the party and now criticizes it from outside. ?]
 
-@forces
+@paramilitaries
 on-arrival: {!
 Q.military_strength_2 = Q.military_strength.toFixed(0);
 Q.police_strength_2 = Q.police_strength.toFixed(0);
@@ -188,7 +175,7 @@ Loyalty below reflects sympathy toward <span style="color: #F5821F;">**Yabloko**
 
 **Broader Far-Right Fringe** Militancy: [+ far_right_extremist_militancy : militancy +]
 
-<span class="tooltip-text" title="Organized crime groups, sourced from MVD's own late-1990s estimate of ~5,700-8,000 criminal groups with a combined membership around 100,000. Related to politics mostly through corruption/patronage rather than ideological sympathy - no loyalty stat is tracked for this reason.">**Organized Crime**</span> Strength: [+ organized_crime_strength_2 +] thousand
+<span class="tooltip-text" title="Organized crime groups, sourced from MVD's own late-1990s estimate of ~5,700-8,000 criminal groups with a combined membership around 100,000. Related to politics mostly through corruption/patronage rather than ideological sympathy.">**Organized Crime**</span> Strength: [+ organized_crime_strength_2 +] thousand
 
 **Organized Crime** Militancy: [+ organized_crime_militancy : militancy +]
 
