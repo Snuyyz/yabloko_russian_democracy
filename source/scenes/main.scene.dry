@@ -55,6 +55,7 @@ if (Q.election_proximity < 1) {
 
 Q.last_time_updated = Q.time;
 if (Q.week) Q.last_week_updated = Q.week;
+1}
 
 max-cards: 3
 
