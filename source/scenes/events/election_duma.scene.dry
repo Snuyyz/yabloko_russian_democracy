@@ -1,0 +1,148 @@
+title: Duma Elections
+new-page: true
+tags: event
+priority: -2
+view-if: election_proximity < 1 and not election_held_this_cycle
+on-arrival: {!
+// This is the generic Duma election event, used for EVERY election cycle
+// except that it must set Q.pure_pr_era correctly before election_algorithm
+// runs, per the real 2005 electoral law: the 2007 and 2011 elections used a
+// fully proportional 450-seat system (7% threshold, no single-mandate
+// districts); every other election in this mod's 1998-2026 span (1999, 2003,
+// 2016, 2021, 2026, etc.) uses the mixed-member 225+225 system. The mixed
+// system was restored starting with the 2016 election (5% threshold).
+if (Q.year == 2007 || Q.year == 2011) {
+    Q.pure_pr_era = 1;
+    Q.pr_threshold = 7;
+} else {
+    Q.pure_pr_era = 0;
+    // threshold reverts to 5% for every era except 2007-2011 specifically -
+    // see DESIGN_DOC §7, mechanic 3. A dedicated threshold-change event
+    // should still fire in-fiction around 2005 and 2016 for narrative
+    // purposes; this line just guarantees the algorithm always uses the
+    // correct number regardless of whether that event has fired yet.
+    Q.pr_threshold = 5;
+}
+
+// Class-party vote-share values are NOT reset here. By the time this event
+// fires, Q.<class>_<party> already reflects whatever the player has built
+// through gameplay since root.scene.dry's 1998 starting values - Media,
+// Campaign cards, advisor actions, and any events in between all accumulate
+// onto these variables with +=, per the base game's own convention (see
+// media.scene.dry). Overwriting them here with hardcoded numbers would
+// silently erase all of that, defeating the purpose of those mechanics.
+// Historical color for any specific election (e.g. Yavlinsky's real,
+// sourced criticism of the Second Chechen War costing Yabloko support
+// ahead of the real 1999 election) should be applied as its own separate,
+// dated event that nudges these variables incrementally beforehand, not
+// baked into this generic election event's on-arrival.
+
+// capture Yabloko's pre-election seat count before election_algorithm
+// recalculates and overwrites it, so the results text can make an honest
+// before/after comparison instead of a tautological one.
+Q.yabloko_seats_before_election = Q.yabloko_total_seats;
+!}
+on-departure: n_elections += 1; election_held_this_cycle = 1; election_called = 0
+set-jump: post_election_duma
+set-bg: img/map_2.jpg
+
+= Duma Elections, [+ month : month +] [+ year +]
+
+[? if pure_pr_era: The State Duma elections are to be held now, under the fully proportional system introduced by the 2005 electoral law - all 450 seats are elected from party lists nationwide, with no single-mandate districts, and a 7% threshold to win seats. ?][? if not pure_pr_era: The State Duma elections are to be held now, under the mixed-member system: 225 seats from party lists (5% threshold) and 225 from single-mandate districts. ?]
+
+- @election_algorithm: May we do our best...
+
+@post_election_duma
+on-arrival: {!
+// minimal post-election bookkeeping - see the base game's election_1928.scene.dry
+// for the full coalition-formation apparatus; per project decision, we are
+// not yet building a coalition-formation menu, so this only sets _r
+// seat-share fields and records history, mirroring election_simulation.scene.dry's
+// simplest @post_election variant rather than election_1928's full apparatus.
+for (var party of Q.parties) {
+    Q[party + '_r'] = Q[party + '_votes'];
+}
+
+Q.last_election_time = Q.time;
+
+var election_result = {'date': new Date(Q.year, Q.month - 1)};
+for (var party of Q.parties_graph) {
+    election_result[party] = Q[party + '_r'];
+}
+Q.election_records.push(election_result);
+
+// set up the next election's timer - Duma terms have varied (4 years for
+// most of this span, 5 years from the 2008 constitutional amendment
+// onward). A dedicated term-length event should update Q.duma_term_years
+// around 2008; default to 4 here if unset, so this scene works correctly
+// even before that event exists.
+if (!Q.duma_term_years) {
+    Q.duma_term_years = 4;
+}
+Q.next_election_year = Q.year + Q.duma_term_years;
+Q.next_election_month = Q.month;
+Q.next_election_time = Q.time + (Q.duma_term_years * 12);
+Q.election_proximity = Q.duma_term_years * 12;
+Q.election_held_this_cycle = 0;
+!}
+go-to: election_results
+
+@election_results
+
+= Election results
+
+**Party-list (PR) vote share and seats:**
+
+<span style="color: #F5821F;">**Yabloko**</span>: [+ yabloko_votes +]% - [+ yabloko_pr_seats +] PR seats
+
+<span style="color: #D2232A;">**KPRF**</span>: [+ kprf_votes +]% - [+ kprf_pr_seats +] PR seats
+
+<span style="color: #003399;">**LDPR**</span>: [+ ldpr_votes +]% - [+ ldpr_pr_seats +] PR seats
+
+<span style="color: #4A7C2F;">**NDR**</span>: [+ ndr_votes +]% - [+ ndr_pr_seats +] PR seats
+
+<span style="color: #6B6B6B;">**RPR**</span>: [+ rpr_votes +]% - [+ rpr_pr_seats +] PR seats
+
+[? if sps_formed: <span style="color: #0072BC;">**SPS**</span>: [+ sps_votes +]% - [+ sps_pr_seats +] PR seats ?]
+
+[? if sr_formed: <span style="color: #C41E3A;">**A Just Russia**</span>: [+ sr_votes +]% - [+ sr_pr_seats +] PR seats ?]
+
+**Others** (including any mid-sized parties not individually modeled, e.g. Fatherland-All Russia in 1999): [+ other_votes +]% - [+ other_pr_seats +] PR seats
+
+[? if not pure_pr_era: **Single-mandate (FPTP) seats, modified cube law per DESIGN_DOC §4:**
+
+<span style="color: #F5821F;">**Yabloko**</span>: [+ yabloko_fptp_seats +]
+
+<span style="color: #D2232A;">**KPRF**</span>: [+ kprf_fptp_seats +]
+
+<span style="color: #003399;">**LDPR**</span>: [+ ldpr_fptp_seats +]
+
+<span style="color: #4A7C2F;">**NDR**</span>: [+ ndr_fptp_seats +]
+
+<span style="color: #6B6B6B;">**RPR**</span>: [+ rpr_fptp_seats +]
+
+**Others**: [+ other_fptp_seats +] ?]
+
+[? if pure_pr_era: No single-mandate seats were contested this cycle - all 450 seats were allocated by party list. ?]
+
+**Total Duma seats:**
+
+<span style="color: #F5821F;">**Yabloko**</span>: [+ yabloko_total_seats +]
+
+<span style="color: #D2232A;">**KPRF**</span>: [+ kprf_total_seats +]
+
+<span style="color: #003399;">**LDPR**</span>: [+ ldpr_total_seats +]
+
+<span style="color: #4A7C2F;">**NDR**</span>: [+ ndr_total_seats +]
+
+<span style="color: #6B6B6B;">**RPR**</span>: [+ rpr_total_seats +]
+
+**Others**: [+ other_total_seats +]
+
+[? if yabloko_total_seats < yabloko_seats_before_election: Yabloko's Duma presence has shrunk from the [+ yabloko_seats_before_election +] seats it held going into this election. ?][? if yabloko_total_seats > yabloko_seats_before_election: Yabloko's Duma presence has grown from the [+ yabloko_seats_before_election +] seats it held going into this election. ?][? if yabloko_total_seats == yabloko_seats_before_election: Yabloko's Duma presence is unchanged at [+ yabloko_seats_before_election +] seats. ?]
+
+Coalition and government-formation mechanics are not yet implemented for this event - see DESIGN_DOC for the planned Act I content scope.
+
+- @continue_election_duma: Continue.
+
+@continue_election_duma

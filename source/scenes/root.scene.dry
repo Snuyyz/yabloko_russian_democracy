@@ -125,6 +125,25 @@ Q.pr_threshold = 5;
 // permanently locked out of list seats regardless of size.
 Q.pr_other_threshold = 20;
 
+// pure-PR era flag (2007 and 2011 elections only - see election_duma.scene.dry
+// and election_algorithm.scene.dry, DESIGN_DOC §4/§7). Starts 0 since 1998
+// is well before that era.
+Q.pure_pr_era = 0;
+
+// Duma term length in years - 4 for most of this span, 5 from the 2008
+// constitutional amendment onward. A dedicated event should update this;
+// election_duma.scene.dry defaults to 4 if unset regardless.
+Q.duma_term_years = 4;
+
+// prevents election_duma.scene.dry from re-firing multiple times within the
+// same narrow election_proximity window before post_event.scene.dry's normal
+// pacing advances past it.
+Q.election_held_this_cycle = 0;
+
+// captured by election_duma.scene.dry immediately before election_algorithm
+// runs, so results text can report an honest before/after seat comparison.
+Q.yabloko_seats_before_election = 45;
+
 // ===== ECONOMY =====
 // sourced: IMF "Russia Rebounds" key monetary indicators table.
 // GDP growth 1997 = 1.4%; year-end inflation 1997 = 11.0%. The 1998 August

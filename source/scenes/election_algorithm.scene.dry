@@ -48,7 +48,7 @@ for (var party of Q.parties) {
 // mandate FPTP. This stage is entirely new - it consumes this scene's own
 // _votes output as input, so it must run after Stage 1 above, not before.
 
-// --- 2a. PR half (225 seats): plain proportional allocation, with threshold ---
+// --- 2a. PR half: plain proportional allocation, with threshold ---
 // Russian Duma PR thresholds have varied by era: 5% pre-2007, 7% 2007-2011,
 // back to 5% from 2016. Q.pr_threshold should be set elsewhere (root.scene.dry
 // or a threshold-change event) before this scene runs; default to 5 if unset.
@@ -69,6 +69,17 @@ if (!Q.pr_other_threshold) {
     Q.pr_other_threshold = 20;
 }
 
+// PURE-PR ERA: the 2005 electoral law abolished single-mandate districts
+// entirely for the 2007 and 2011 Duma elections (7% threshold both times),
+// electing all 450 seats by nationwide party-list PR. The mixed-member
+// system was restored from the 2016 election onward (back to 5% threshold).
+// Q.pure_pr_era should be set to 1 by the calling event for the 2007 and
+// 2011 elections specifically, and 0 (or unset) for every other election -
+// it is NOT inferred from the date here, since this scene has no year
+// context of its own; the caller (e.g. events/election_duma.scene.dry)
+// owns that decision.
+var pr_seat_total = Q.pure_pr_era ? 450 : 225;
+
 var pr_eligible_total = 0;
 for (var party of Q.parties) {
     if (party == "other" && Q[party+'_votes'] >= Q.pr_other_threshold) {
@@ -80,46 +91,57 @@ for (var party of Q.parties) {
 for (var party of Q.parties) {
     if (party == "other") {
         if (Q[party+'_votes'] >= Q.pr_other_threshold && pr_eligible_total > 0) {
-            Q[party+'_pr_seats'] = Math.round((Q[party+'_votes'] / pr_eligible_total) * 225);
+            Q[party+'_pr_seats'] = Math.round((Q[party+'_votes'] / pr_eligible_total) * pr_seat_total);
         } else {
             Q[party+'_pr_seats'] = 0;
         }
     } else if (Q[party+'_votes'] >= Q.pr_threshold && pr_eligible_total > 0) {
-        Q[party+'_pr_seats'] = Math.round((Q[party+'_votes'] / pr_eligible_total) * 225);
+        Q[party+'_pr_seats'] = Math.round((Q[party+'_votes'] / pr_eligible_total) * pr_seat_total);
     } else {
         Q[party+'_pr_seats'] = 0;
     }
 }
 
 // --- 2b. FPTP half (225 seats): modified cube law, per DESIGN_DOC §4 ---
+// Skipped entirely during the pure-PR era (2007, 2011) - there are no
+// single-mandate districts to allocate. Every party's FPTP seat count is
+// explicitly zeroed rather than left stale from a previous election.
 // Named parties: (vote_share/2)^2. 'other': vote_share^3 (undamped).
 // Verified against the user-supplied 1999 worked example: reproduces
 // Yabloko 3, KPRF 56, LDPR 3, Unity/UR 51, SPS 7, SR 0, Other 104 exactly
 // when fed those parties' real 1999 PR vote shares. Unlike the PR half above,
 // the FPTP formula's cube/square treatment already handles a large 'other'
 // share proportionately, so no separate other-threshold is needed here.
-var fptp_total = 0;
-for (var party of Q.parties) {
-    var v = Q[party+'_votes'] / 100;
-    if (party == "other") {
-        Q[party+'_fptp_modified'] = Math.pow(v, 3);
-    } else {
-        Q[party+'_fptp_modified'] = Math.pow(v / 2, 2);
-    }
-    fptp_total += Q[party+'_fptp_modified'];
-}
-for (var party of Q.parties) {
-    if (fptp_total > 0) {
-        Q[party+'_fptp_seats'] = Math.round((Q[party+'_fptp_modified'] / fptp_total) * 225);
-    } else {
+if (Q.pure_pr_era) {
+    for (var party of Q.parties) {
         Q[party+'_fptp_seats'] = 0;
+    }
+} else {
+    var fptp_total = 0;
+    for (var party of Q.parties) {
+        var v = Q[party+'_votes'] / 100;
+        if (party == "other") {
+            Q[party+'_fptp_modified'] = Math.pow(v, 3);
+        } else {
+            Q[party+'_fptp_modified'] = Math.pow(v / 2, 2);
+        }
+        fptp_total += Q[party+'_fptp_modified'];
+    }
+    for (var party of Q.parties) {
+        if (fptp_total > 0) {
+            Q[party+'_fptp_seats'] = Math.round((Q[party+'_fptp_modified'] / fptp_total) * 225);
+        } else {
+            Q[party+'_fptp_seats'] = 0;
+        }
     }
 }
 
 // --- 2c. Combined total ---
 // Small rounding drift from 450 is expected and accepted as-is per
 // DESIGN_DOC §4 (both halves round independently) - no largest-remainder
-// cleanup pass, matching the design decision already made.
+// cleanup pass, matching the design decision already made. During the
+// pure-PR era, total_seats is just pr_seats (fptp_seats is zeroed above),
+// so no special-casing is needed here.
 for (var party of Q.parties) {
     Q[party+'_total_seats'] = Q[party+'_pr_seats'] + Q[party+'_fptp_seats'];
 }

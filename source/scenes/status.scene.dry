@@ -83,6 +83,58 @@ State Duma composition (PR + FPTP seats, per DESIGN_DOC §4):
 
 Next election: [+ next_election_month : month +] [+ next_election_year +]
 
+@duma_diagram
+title: State Duma Composition
+on-display: {!
+if (d3 && window) {
+    const data = [];
+    var party_colors = {
+        'yabloko': '#F5821F',
+        'kprf': '#D2232A',
+        'ldpr': '#003399',
+        'ndr': '#4A7C2F',
+        'rpr': '#6B6B6B',
+        'sps': '#0072BC',
+        'sr': '#C41E3A',
+        'other': '#999999'
+    };
+    for (var party of Q.parties) {
+        if (Q[party + '_total_seats']) {
+            data.push({
+                "id": party,
+                "legend": party.toUpperCase(),
+                "name": party.toUpperCase(),
+                "color": party_colors[party] || '#999999',
+                // unlike the base game's Reichstag diagram (which stores _r as
+                // a fraction and multiplies by reichstag_size), our own
+                // election_algorithm.scene.dry already computes real seat
+                // counts directly per DESIGN_DOC §4's mixed-member model, so
+                // _total_seats is used as-is with no further conversion.
+                "seats": Q[party + '_total_seats'],
+            });
+        }
+    }
+
+    var width = 500;
+    var height = 500;
+    var screenWidth = document.getElementById('content').offsetWidth;
+    if (screenWidth < width - 50) {
+        width = screenWidth - 50;
+        height = width;
+        document.getElementById("duma_diagram").style.height = screenWidth/2 + "px";
+    }
+    var parliament = d3.parliament();
+    parliament.width(width).height(height).innerRadiusCoef(0.4);
+    parliament.enter.fromCenter(true).smallToBig(true);
+    parliament.exit.toCenter(false).bigToSmall(true);
+    d3.select("#duma_diagram").datum(data).call(parliament);
+}
+!}
+
+= State Duma Composition
+
+{!<svg id="duma_diagram" style="width: 500px; height: 250px;"> </svg>!}
+
 = Economics
 
 Inflation: [+ inflation_2 +]%
