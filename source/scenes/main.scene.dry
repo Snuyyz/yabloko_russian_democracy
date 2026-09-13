@@ -41,7 +41,7 @@ if (Q.election_proximity < 1) {
 // The base game tracks ~60+ dated flavour_N_trigger flags here, each firing a
 // one-shot narrative paragraph later in this file's card body. We are
 // deliberately deferring flavor-paragraph content to a later pass (per project
-// decision) but keeping the same trigger/shown/time bookkeeping pattern ready 
+// decision) but keeping the same trigger/shown/time bookkeeping pattern ready
 // to receive it, so flavor text can be added without restructuring this file.
 // Example shape (commented out until real Act I flavor content is written):
 //
@@ -54,12 +54,9 @@ if (Q.election_proximity < 1) {
 // }
 
 Q.last_time_updated = Q.time;
-if (Q.week) Q.last_week_updated = Q.week; 
-
-
-max-cards: 3
-
+if (Q.week) Q.last_week_updated = Q.week;
 !}
+max-cards: 3
 
 #Here, the main deck will be displayed. Clicking on the deck draws a card into your hand. Clicking on a card activates that card.
 
