@@ -109,19 +109,19 @@ go-to: election_results
 
 **Others** (including any mid-sized parties not individually modeled, e.g. Fatherland-All Russia in 1999): [+ other_votes +]% - [+ other_pr_seats +] PR seats
 
-[? if not pure_pr_era: **Single-mandate (FPTP) seats, modified cube law per DESIGN_DOC §4:**
+[? if not pure_pr_era: **Single-mandate (FPTP) seats, modified cube law per DESIGN_DOC §4:** ?]
 
-<span style="color: #F5821F;">**Yabloko**</span>: [+ yabloko_fptp_seats +]
+[? if not pure_pr_era: <span style="color: #F5821F;">**Yabloko**</span>: [+ yabloko_fptp_seats +] ?]
 
-<span style="color: #D2232A;">**KPRF**</span>: [+ kprf_fptp_seats +]
+[? if not pure_pr_era: <span style="color: #D2232A;">**KPRF**</span>: [+ kprf_fptp_seats +] ?]
 
-<span style="color: #003399;">**LDPR**</span>: [+ ldpr_fptp_seats +]
+[? if not pure_pr_era: <span style="color: #003399;">**LDPR**</span>: [+ ldpr_fptp_seats +] ?]
 
-<span style="color: #4A7C2F;">**NDR**</span>: [+ ndr_fptp_seats +]
+[? if not pure_pr_era: <span style="color: #4A7C2F;">**NDR**</span>: [+ ndr_fptp_seats +] ?]
 
-<span style="color: #6B6B6B;">**RPR**</span>: [+ rpr_fptp_seats +]
+[? if not pure_pr_era: <span style="color: #6B6B6B;">**RPR**</span>: [+ rpr_fptp_seats +] ?]
 
-**Others**: [+ other_fptp_seats +] ?]
+[? if not pure_pr_era: **Others**: [+ other_fptp_seats +] ?]
 
 [? if pure_pr_era: No single-mandate seats were contested this cycle - all 450 seats were allocated by party list. ?]
 
