@@ -1,7 +1,7 @@
 title: Duma Elections
 new-page: true
 tags: event
-priority: -2
+priority: 100000000
 view-if: (year = next_election_year and month >= next_election_month) or (year > next_election_year)
 on-arrival: {!
 // This is the generic Duma election event, used for EVERY election cycle
@@ -43,6 +43,7 @@ if (Q.year == 2007 || Q.year == 2011) {
 Q.yabloko_seats_before_election = Q.yabloko_total_seats;
 !}
 on-departure: n_elections += 1; election_called = 0
+set-jump: post_election_duma
 set-bg: img/map_2.jpg
 
 = Duma Elections, [+ month : month +] [+ year +]
