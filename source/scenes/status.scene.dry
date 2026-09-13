@@ -39,6 +39,8 @@ President: <span style="color: #808080;">[+ president +]</span> ([? if president
 
 Prime Minister: [+ prime_minister +] ([+ prime_minister_party +])
 
+Relations with the Executive: [+ executive_relation : relationships +]
+
 Finance Minister: [+ finance_minister +] ([? if finance_minister_party == "Yabloko": <span style="color: #F5821F;">**Yabloko**</span>?][? if finance_minister_party == "I": I?][? if finance_minister_party != "Yabloko" and finance_minister_party != "I": [+ finance_minister_party +]?])
 
 Foreign Minister: [+ foreign_minister +] ([+ foreign_minister_party +])
@@ -52,7 +54,6 @@ Defense Minister: [+ defense_minister +] ([+ defense_minister_party +])
 Economy Minister: [+ economy_minister +] ([+ economy_minister_party +])
 
 Labor Minister: [+ labor_minister +] ([+ labor_minister_party +])
-Relations with the Executive: [+ executive_relation : relationships +]
 
 = State Duma
 
