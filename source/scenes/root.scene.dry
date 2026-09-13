@@ -129,10 +129,11 @@ Q.pure_pr_era = 0;
 // election_duma.scene.dry defaults to 4 if unset regardless.
 Q.duma_term_years = 4;
 
-// prevents election_duma.scene.dry from re-firing multiple times within the
-// same narrow election_proximity window before post_event.scene.dry's normal
-// pacing advances past it.
-Q.election_held_this_cycle = 0;
+// election_duma.scene.dry's view-if now matches directly against
+// next_election_year/next_election_month (mirroring the base game's own
+// election_1928.scene.dry pattern), so a separate "already held this cycle"
+// flag isn't needed - advancing next_election_year/month forward after the
+// election naturally stops the view-if from matching again.
 
 // captured by election_duma.scene.dry immediately before election_algorithm
 // runs, so results text can report an honest before/after seat comparison.

@@ -22,12 +22,17 @@ if (Q.shuffle_leadership_timer <= 0) {
 }
 
 // ===== ELECTION-CYCLE PACING HOOK (DESIGN_DOC §6) =====
-// Q.election_proximity is maintained in set_next_election_time.scene.dry.
-// This block sets Q.pinnedCardsDescription context for the campaign window and
-// is the natural home for any future month_actions-per-week throttling during
-// the 3-month pre-election window - not yet implemented in this skeleton pass,
-// since we're standing up the mechanical structure before layering pacing logic
-// and flavor text on top of it.
+// Q.election_proximity is computed fresh here each time, in months, directly
+// from next_election_year/next_election_month vs. the current date - not
+// maintained as separately-decremented state, since nothing was actually
+// decrementing it before (a real gap: this is why the campaign/media pacing
+// hook below was effectively inert). election_duma.scene.dry's own view-if
+// no longer depends on this value (it matches year/month directly, mirroring
+// the base game's election_1928.scene.dry pattern), so this recomputation
+// only affects the campaign-window pacing/lockout logic, not whether the
+// election itself fires.
+Q.election_proximity = (Q.next_election_year - Q.year) * 12 + (Q.next_election_month - Q.month);
+
 if (Q.election_proximity <= 3 && Q.election_proximity >= 1 && !Q.election_called) {
     Q.election_called = 1;
 }
@@ -62,10 +67,10 @@ max-cards: 3
 
 {!<div class="scrollable-box">!}
 
-# Flavor paragraphs (per-month narrative text, [? if year = X and month = Y: ... ?]
-# style, matching the base game's pattern) are intentionally not yet written here.
-# See DESIGN_DOC and the flavour-trigger placeholder above for the intended
-# structure once that content pass begins.
+// Flavor paragraphs (per-month narrative text, [? if year = X and month = Y: ... ?]
+// style, matching the base game's pattern) are intentionally not yet written here.
+// See DESIGN_DOC and the flavour-trigger placeholder above for the intended
+// structure once that content pass begins.
 
 {!</div>!}
 
