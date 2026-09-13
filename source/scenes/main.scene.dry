@@ -1,10 +1,10 @@
 title: Next month
 is-hand: true
 on-arrival: {!
-// Pinned-card description bookkeeping - tells the player when their next
-// advisor action and leadership reshuffle become available. Mirrors the
-// base game's advisor_action_timer/shuffle_leadership_timer pattern exactly;
-// no Russia-specific changes needed here, since this is pure UI plumbing.
+# Pinned-card description bookkeeping - tells the player when their next
+# advisor action and leadership reshuffle become available. Mirrors the
+# base game's advisor_action_timer/shuffle_leadership_timer pattern exactly;
+# no Russia-specific changes needed here, since this is pure UI plumbing.
 if (Q.advisor_action_timer <= 0) {
     Q.pinnedCardsDescription = 'Advisors - an action is available';
 } else if (Q.advisor_action_timer == 1) {
@@ -21,13 +21,13 @@ if (Q.shuffle_leadership_timer <= 0) {
     Q.pinnedCardsDescription += '\n- next reshuffle in ' + Q.shuffle_leadership_timer + ' months.';
 }
 
-// ===== ELECTION-CYCLE PACING HOOK (DESIGN_DOC §6) =====
-// Q.election_proximity is maintained in set_next_election_time.scene.dry.
-// This block sets Q.pinnedCardsDescription context for the campaign window and
-// is the natural home for any future month_actions-per-week throttling during
-// the 3-month pre-election window - not yet implemented in this skeleton pass,
-// since we're standing up the mechanical structure before layering pacing logic
-// and flavor text on top of it.
+# ===== ELECTION-CYCLE PACING HOOK (DESIGN_DOC §6) =====
+# Q.election_proximity is maintained in set_next_election_time.scene.dry.
+# This block sets Q.pinnedCardsDescription context for the campaign window and
+# is the natural home for any future month_actions-per-week throttling during
+# the 3-month pre-election window - not yet implemented in this skeleton pass,
+# since we're standing up the mechanical structure before layering pacing logic
+# and flavor text on top of it.
 if (Q.election_proximity <= 3 && Q.election_proximity >= 1 && !Q.election_called) {
     Q.election_called = 1;
 }
@@ -37,21 +37,21 @@ if (Q.election_proximity < 1) {
     Q.campaign_locked = 0;
 }
 
-// ===== FLAVOR TRIGGER BOOKKEEPING (placeholder structure, no content yet) =====
-// The base game tracks ~60+ dated flavour_N_trigger flags here, each firing a
-// one-shot narrative paragraph later in this file's card body. We are
-// deliberately deferring flavor-paragraph content to a later pass (per project
-// decision) but keeping the same trigger/shown/time bookkeeping pattern ready
-// to receive it, so flavor text can be added without restructuring this file.
-// Example shape (commented out until real Act I flavor content is written):
-//
-// if (Q.year == 1998 && Q.month == 8 && Q.time !== Q.last_time_updated) {
-//     Q.flavour_0_trigger += 1;
-//     if (Q.flavour_0_trigger && !Q.flavour_0_trigger_shown) {
-//         Q.flavour_0_trigger_time = Q.time;
-//         Q.flavour_0_trigger_shown = 1;
-//     }
-// }
+# ===== FLAVOR TRIGGER BOOKKEEPING (placeholder structure, no content yet) =====
+# The base game tracks ~60+ dated flavour_N_trigger flags here, each firing a
+# one-shot narrative paragraph later in this file's card body. We are
+# deliberately deferring flavor-paragraph content to a later pass (per project
+# decision) but keeping the same trigger/shown/time bookkeeping pattern ready
+# to receive it, so flavor text can be added without restructuring this file.
+# Example shape (commented out until real Act I flavor content is written):
+#
+# if (Q.year == 1998 && Q.month == 8 && Q.time !== Q.last_time_updated) {
+#     Q.flavour_0_trigger += 1;
+#     if (Q.flavour_0_trigger && !Q.flavour_0_trigger_shown) {
+#         Q.flavour_0_trigger_time = Q.time;
+#         Q.flavour_0_trigger_shown = 1;
+#     }
+# }
 
 Q.last_time_updated = Q.time;
 if (Q.week) Q.last_week_updated = Q.week;
