@@ -98,7 +98,25 @@ view-if: yabloko_in_government = 1 and (economy_minister_party == "Yabloko" or f
 card-image:
 is-deck: true
 
-- #economic_policy
+- @economic_policy
+
+
+@economic_policy
+title: Economic Policy
+on-arrival: economic_policy_timer += 6; month_actions += 1;
+
+# Placeholder economic-policy card: fires only once Zadornov (or a future
+# Yabloko-affiliated economy/finance minister) is actually in post, per
+# root.scene.dry's zadornov_recruited_back mechanic. Full content (real
+# 1998-era policy choices - tax reform, IMF negotiations, budget priorities)
+# is deferred to a later content pass; this stub exists so @eco's option
+# resolves to a real, titled scene rather than an empty/missing reference.
+
+With a Yabloko-affiliated minister at the Finance Ministry, the party has a real say in economic policy.
+
+- @continue_eco: Continue.
+
+@continue_eco
 
 @time
 title: Bide our Time

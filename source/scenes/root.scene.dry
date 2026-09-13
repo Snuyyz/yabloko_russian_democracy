@@ -327,6 +327,11 @@ Q.minority_government = 0;
 Q.finance_minister = "Zadornov";
 Q.finance_minister_party = "I";
 Q.zadornov_recruited_back = 0;
+
+// gates main.scene.dry's Economic Policy card (@eco) - starts at 0 so the
+// card is available as soon as a Yabloko-affiliated minister takes the
+// relevant portfolio, rather than being locked out at game start.
+Q.economic_policy_timer = 0;
 Q.foreign_minister = "Primakov";
 Q.foreign_minister_party = "I";
 Q.interior_minister = "Kulikov";
