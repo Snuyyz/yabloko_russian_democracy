@@ -1,21 +1,21 @@
 title: Status
 new-page: true
 is-special: true
-// NOTE: the @polls tab below references _votes and _display variables
-// (e.g. yabloko_votes, urban_professional_yabloko_display) that are meant to
-// be computed by election_algorithm.scene.dry, per DESIGN_DOC §4. That file
-// has not been written yet - this tab is structurally complete and will work
-// once the algorithm exists, but will show blank/undefined values until then.
+# NOTE: the @polls tab below references _votes and _display variables
+# (e.g. yabloko_votes, urban_professional_yabloko_display) that are meant to
+# be computed by election_algorithm.scene.dry, per DESIGN_DOC §4. That file
+# has not been written yet - this tab is structurally complete and will work
+# once the algorithm exists, but will show blank/undefined values until then.
 on-arrival: {!
 if (Q.inflation) {
-    Q.inflation_2 = Q.inflation.toFixed(2);
+    Q.inflation_2 = Q.inflation.toFixed(1);
 }
 if (Q.unemployment) {
-    Q.unemployment_2 = Q.unemployment.toFixed(2);
+    Q.unemployment_2 = Q.unemployment.toFixed(1);
 }
 Q.economic_growth_2 = '0';
 if (Q.economic_growth) {
-    Q.economic_growth_2 = Q.economic_growth.toFixed(2);
+    Q.economic_growth_2 = Q.economic_growth.toFixed(1);
 }
 !}
 
@@ -39,7 +39,7 @@ President: <span style="color: #808080;">[+ president +]</span> ([? if president
 
 Prime Minister: [+ prime_minister +] ([+ prime_minister_party +])
 
-Party Leader: [+ leader_party_role +] [+ leader +]
+Party Chairman: [+ leader +] ([+ leader_party_role +])
 
 Finance Minister: [+ finance_minister +] ([? if finance_minister_party == "Yabloko": <span style="color: #F5821F;">**Yabloko**</span>?][? if finance_minister_party == "I": I?][? if finance_minister_party != "Yabloko" and finance_minister_party != "I": [+ finance_minister_party +]?])
 
@@ -115,19 +115,19 @@ Oligarch relation: [+ oligarch_relation : relationships +]
 
 = Party Leadership
 
-<span style="color: #D2232A;">**KPRF**</span>: Marxism-leninism ([+ kprf_leader +])
+<span style="color: #D2232A;">**KPRF**</span>: Marxist-Leninist ([+ kprf_leader +])
 
-<span style="color: #003399;">**LDPR**</span>: Far-right populism ([+ ldpr_leader +])
+<span style="color: #003399;">**LDPR**</span>: Nationalist Populism ([+ ldpr_leader +])
 
-<span style="color: #4A7C2F;">**NDR**</span>: Conservative liberalism ([+ ndr_leader +])
+<span style="color: #4A7C2F;">**NDR**</span>: Centrist/Pro-Government ([+ ndr_leader +])
 
-<span style="color: #6B6B6B;">**RPR**</span>: Liberal conservatism ([+ rpr_leader +])
+<span style="color: #6B6B6B;">**RPR**</span>: Liberal Democratic ([+ rpr_leader +])
 
 = Internal Factions of <span style="color: #F5821F;">**Yabloko**</span>
 
-{!<span class="tooltip-text" title="The founding-generation current organized around Yavlinsky's personal authority and caution over the party list and messaging.">Yavlinsky Group</span>!} strength: [+ yavlinsky_wing_strength : strength +], dissent: [+ yavlinsky_wing_dissent : dissent +]
+{!<span class="tooltip-text" title="The founding-generation current organized around Yavlinsky's personal authority and caution over the party list and messaging.">Yavlinsky wing</span>!} strength: [+ yavlinsky_wing_strength : strength +], dissent: [+ yavlinsky_wing_dissent : dissent +]
 
-{!<span class="tooltip-text" title="This faction promotes, classic European-style social democracy: welfare-state concerns, coalition pragmatism, and municipal/regional base-building.">Socio-Democratic wing</span>!} strength: [+ social_democrat_wing_strength : strength +], dissent: [+ social_democrat_wing_dissent : dissent +]
+{!<span class="tooltip-text" title="Classic European-style social liberalism: welfare-state concerns, coalition pragmatism, and municipal/regional base-building. Anchored by Yabloko's real Socio-Democratic faction, headed by Anatoly Golov.">Socio-Democratic wing</span>!} strength: [+ social_democrat_wing_strength : strength +], dissent: [+ social_democrat_wing_dissent : dissent +]
 
 {!<span class="tooltip-text" title="Market-first, Yeltsin-tolerant members closer to the SPS worldview, most likely to push a merger-of-liberals card.">Liberal Conservative fringe</span>!} strength: [+ liberal_conservative_fringe_strength : strength +], dissent: [+ liberal_conservative_fringe_dissent : dissent +]
 
@@ -143,13 +143,13 @@ Oligarch relation: [+ oligarch_relation : relationships +]
 
 @forces
 on-arrival: {!
-Q.military_strength_2 = Q.military_strength.toFixed(2);
-Q.police_strength_2 = Q.police_strength.toFixed(2);
-Q.internal_troops_strength_2 = Q.internal_troops_strength.toFixed(2);
-Q.mchs_strength_2 = Q.mchs_strength.toFixed(2);
-Q.nazbol_strength_2 = Q.nazbol_strength.toFixed(2);
-Q.far_right_extremist_strength_2 = Q.far_right_extremist_strength.toFixed(2);
-Q.organized_crime_strength_2 = Q.organized_crime_strength.toFixed(2);
+Q.military_strength_2 = Q.military_strength.toFixed(0);
+Q.police_strength_2 = Q.police_strength.toFixed(0);
+Q.internal_troops_strength_2 = Q.internal_troops_strength.toFixed(0);
+Q.mchs_strength_2 = Q.mchs_strength.toFixed(0);
+Q.nazbol_strength_2 = Q.nazbol_strength.toFixed(0);
+Q.far_right_extremist_strength_2 = Q.far_right_extremist_strength.toFixed(0);
+Q.organized_crime_strength_2 = Q.organized_crime_strength.toFixed(0);
 !}
 
 = Security Forces

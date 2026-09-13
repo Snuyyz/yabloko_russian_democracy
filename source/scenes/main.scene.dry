@@ -116,3 +116,10 @@ There is little to be done for now. The party continues its ordinary work.
 - @continue: Continue.
 
 @continue
+
+@main_easy
+# Difficulty tiers below normal (Q.difficulty < 0) are not yet implemented
+# for this mod - aliased directly to the normal hand so post_event.scene.dry's
+# existing main.main_easy branch (for difficulty < 0) still resolves to a real
+# scene rather than erroring, until a real easy-mode variant is built.
+go-to: main
