@@ -95,7 +95,7 @@ is-deck: true
 
 @eco
 title: Economic Policy
-view-if: yabloko_in_government = 1 and (economy_minister_party == "Yabloko" or finance_minister_party == "Yabloko") and economic_policy_timer <= 0
+view-if: yabloko_in_government = 1 and (economy_minister_party = "Yabloko" or finance_minister_party = "Yabloko") and economic_policy_timer <= 0
 card-image:
 is-deck: true
 
