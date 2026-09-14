@@ -83,7 +83,7 @@ var pr_seat_total = Q.pure_pr_era ? 450 : 225;
 var pr_eligible_total = 0;
 for (var party of Q.parties) {
     if (party == "other" && Q[party+'_votes'] >= Q.pr_other_threshold) {
-        pr_eligible_total += Q[party+'_votes'];
+        pr_eligible_total += ((Q[party+'_votes'] * Q[party+'_votes']) / 100);
     } else if (party != "other" && Q[party+'_votes'] >= Q.pr_threshold) {
         pr_eligible_total += Q[party+'_votes'];
     }
@@ -91,7 +91,7 @@ for (var party of Q.parties) {
 for (var party of Q.parties) {
     if (party == "other") {
         if (Q[party+'_votes'] >= Q.pr_other_threshold && pr_eligible_total > 0) {
-            Q[party+'_pr_seats'] = Math.round((Q[party+'_votes'] / pr_eligible_total) * pr_seat_total);
+            Q[party+'_pr_seats'] = Math.round(((Q[party+'_votes'] * Q[party+'_votes'] / 100) / pr_eligible_total) * pr_seat_total);
         } else {
             Q[party+'_pr_seats'] = 0;
         }

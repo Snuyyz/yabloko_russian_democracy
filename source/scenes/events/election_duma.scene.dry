@@ -1,7 +1,7 @@
 title: Duma Elections
 new-page: true
 tags: event
-priority: -2
+priority: 100000000
 view-if: (year = next_election_year and month >= next_election_month) or (year > next_election_year)
 on-arrival: {!
 // This is the generic Duma election event, used for EVERY election cycle
