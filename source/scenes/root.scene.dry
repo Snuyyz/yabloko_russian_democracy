@@ -19,8 +19,14 @@ go-to: start_menu_2
 - @game_over.achievements
 
 @act1_start
-on-arrival:
-go-to: act1_confirm
+on-arrival: player_beg = 1 if not achievement_game_completed
+go-to: act1_confirm if achievement_game_completed; pls_player if not achievement_game_completed
+
+@pls_player
+
+Read.
+
+- @modinfo.infotext: Mod Info
 
 @act1_confirm
 on-arrival: {!
