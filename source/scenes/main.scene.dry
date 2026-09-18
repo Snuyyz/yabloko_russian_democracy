@@ -122,6 +122,7 @@ With a Yabloko-affiliated minister at the Finance Ministry, the party has a real
 - @continue_eco: Continue.
 
 @continue_eco
+go-to: root
 
 @time
 title: Bide our Time
@@ -134,12 +135,14 @@ is-deck: true
 
 @wait_filler
 title: There is little to be done for now.
+on-arrival: month_actions += 1;
 
 There is little to be done for now. The party continues its ordinary work.
 
 - @continue: Continue.
 
 @continue
+go-to: root
 
 @main_easy
 # Difficulty tiers below normal (Q.difficulty < 0) are not yet implemented
